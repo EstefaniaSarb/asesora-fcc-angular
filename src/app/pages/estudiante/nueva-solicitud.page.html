@@ -1,0 +1,124 @@
+@switch (vista()) {
+  @case ('conflicto') {
+    <div class="page narrow-page">
+      <div class="empty-state card error-state" role="alert">
+        <span><mat-icon class="icon icon-lg">event_busy</mat-icon></span>
+        <h1>Este horario acaba de ocuparse</h1>
+        <p>Otra persona confirmó el horario mientras completabas la solicitud. Conservamos el tema y la descripción que capturaste.</p>
+        <button type="button" class="btn btn-primary" (click)="elegirOtroHorario()"><mat-icon class="icon">calendar_month</mat-icon>Elegir otro horario</button>
+      </div>
+    </div>
+  }
+  @case ('exito') {
+    <div class="success-page" role="status">
+      <span class="success-hero-icon"><mat-icon class="icon icon-lg">check_circle</mat-icon></span>
+      <span class="eyebrow">Solicitud enviada</span>
+      <h1>¡Listo!</h1>
+      <p>Tu solicitud fue enviada a {{ profesorEnviado() }}. Te avisaremos en cuanto responda.</p>
+      <div class="folio-box"><span>Número de folio</span><strong>{{ folio() }}</strong>
+        <button type="button" aria-label="Copiar folio" (click)="copiarFolio()"><mat-icon class="icon">content_copy</mat-icon></button></div>
+      <div class="info-note"><mat-icon class="icon">schedule</mat-icon><p><strong>Estado: Pendiente</strong><br />Normalmente los docentes responden en menos de 24 horas.</p></div>
+      <div class="success-actions">
+        <a class="btn btn-primary" [routerLink]="['/estudiante/solicitudes', folio()]">Ver estado de la solicitud</a>
+        <a class="btn btn-secondary" routerLink="/estudiante/inicio">Volver al inicio</a>
+      </div>
+    </div>
+  }
+  @default {
+    <div class="page narrow-page">
+      <app-migas-pan [migas]="[{ etiqueta: 'Inicio', ruta: '/estudiante/inicio' }, { etiqueta: borrador.materia() }, { etiqueta: profesor().nombre }, { etiqueta: 'Nueva solicitud' }]" />
+      <div class="progress-steps" aria-label="Progreso de la solicitud">
+        <span class="done"><b>1</b>Docente</span><i></i><span class="done"><b>2</b>Horario</span><i></i>
+        <span [class]="vista() === 'detalles' ? 'current' : 'done'"><b>3</b>Detalles</span><i></i>
+        <span [class]="vista() === 'confirmar' ? 'current' : ''"><b>4</b>Confirmar</span>
+      </div>
+      <app-titulo-pagina
+        [antetitulo]="vista() === 'detalles' ? 'Paso 3 de 4' : 'Paso 4 de 4'"
+        [titulo]="vista() === 'detalles' ? 'Cuéntanos sobre tu duda' : 'Revisa y confirma tu solicitud'"
+        [texto]="vista() === 'detalles' ? 'Esta información ayudará al docente a prepararse para la asesoría.' : 'Verifica que los datos sean correctos antes de enviar.'" />
+
+      <div class="form-layout">
+        @if (vista() === 'detalles') {
+          <form class="card form-card" [formGroup]="form" (ngSubmit)="revisar()" novalidate>
+            <div class="field" [class.field-error]="form.controls.tema.invalid && (form.controls.tema.touched || enviado())">
+              <label for="tema">Tema específico <span aria-hidden="true">*</span></label>
+              <input id="tema" formControlName="tema" placeholder="Ej. Recursividad y casos base" aria-describedby="tema-ayuda" />
+              <small id="tema-ayuda">Escribe el concepto principal que deseas revisar.</small>
+              @if (form.controls.tema.invalid && (form.controls.tema.touched || enviado())) {
+                <span class="error-message" role="alert"><mat-icon class="icon icon-sm">error</mat-icon>Escribe el tema que quieres revisar.</span>
+              }
+            </div>
+            <div class="field" [class.field-error]="form.controls.descripcion.invalid && (form.controls.descripcion.touched || enviado())">
+              <label for="descripcion">Describe brevemente tu duda <span aria-hidden="true">*</span></label>
+              <textarea id="descripcion" formControlName="descripcion" rows="5" maxlength="500" aria-describedby="descripcion-ayuda"
+                placeholder="Explica qué has intentado y en qué parte necesitas apoyo…"></textarea>
+              <small id="descripcion-ayuda">{{ descripcionLargo().length }}/500 caracteres · Mínimo 15</small>
+              @if (form.controls.descripcion.invalid && (form.controls.descripcion.touched || enviado())) {
+                <span class="error-message" role="alert"><mat-icon class="icon icon-sm">error</mat-icon>Describe tu duda con al menos 15 caracteres.</span>
+              }
+            </div>
+            <fieldset class="mode-select">
+              <legend>Modalidad</legend>
+              @for (m of profesor().modalidades; track m) {
+                <label [class.selected]="form.controls.modalidad.value === m">
+                  <input type="radio" formControlName="modalidad" [value]="m" />
+                  <mat-icon class="icon">{{ m === 'Presencial' ? 'meeting_room' : 'videocam' }}</mat-icon>
+                  <span><strong>{{ m }}</strong><small>{{ m === 'Presencial' ? profesor().ubicacion : 'Recibirás el enlace al confirmar' }}</small></span>
+                </label>
+              }
+            </fieldset>
+            <div class="upload-box">
+              <mat-icon class="icon">upload_file</mat-icon>
+              <div>
+                <strong>Adjunta evidencia (opcional)</strong>
+                @if (borrador.adjunto(); as a) {
+                  <p class="attachment-chosen"><mat-icon class="icon icon-sm">description</mat-icon>{{ a.nombre }} · {{ a.tamano }}
+                    <button type="button" class="btn btn-text" (click)="borrador.adjunto.set(undefined)">Quitar</button></p>
+                } @else {
+                  <p>Imagen, PDF o código · Máximo 10 MB</p>
+                }
+              </div>
+              <label class="btn btn-secondary" for="adjunto">Seleccionar archivo</label>
+              <input id="adjunto" type="file" class="cdk-visually-hidden-file" accept=".pdf,.png,.jpg,.jpeg,.c,.cpp,.java,.py,.ts,.js,.txt,.zip" (change)="archivo($event)" />
+            </div>
+            <button type="submit" class="d-none">Revisar</button>
+          </form>
+        } @else {
+          <section class="card review-card">
+            <div class="review-header">
+              <span class="success-icon"><mat-icon class="icon icon-lg">fact_check</mat-icon></span>
+              <div><h2>Resumen de la asesoría</h2><p>Tu solicitud se enviará a {{ profesor().nombre }}.</p></div>
+              <button type="button" class="text-link" (click)="vista.set('detalles')"><mat-icon class="icon icon-sm">edit</mat-icon>Editar</button>
+            </div>
+            <dl class="review-list">
+              <div><dt>Materia</dt><dd>{{ borrador.materia() }}</dd></div>
+              <div><dt>Tema</dt><dd>{{ form.controls.tema.value }}</dd></div>
+              <div><dt>Fecha y hora</dt><dd>{{ borrador.fechaHora() | fechaAsesoria }}</dd></div>
+              <div><dt>Modalidad</dt><dd>{{ form.controls.modalidad.value }}</dd></div>
+              <div class="wide"><dt>Descripción de la duda</dt><dd>{{ form.controls.descripcion.value }}</dd></div>
+              @if (borrador.adjunto(); as a) { <div class="wide"><dt>Archivo adjunto</dt><dd>{{ a.nombre }} ({{ a.tamano }})</dd></div> }
+            </dl>
+            <div class="info-note"><mat-icon class="icon">info</mat-icon><p><strong>¿Qué sucederá después?</strong><br />El docente revisará tu solicitud. Te notificaremos cuando la confirme o proponga otro horario.</p></div>
+          </section>
+        }
+
+        <aside class="summary-side card">
+          <span class="eyebrow">Tu selección</span><h3>{{ borrador.materia() }}</h3>
+          <div class="summary-person"><span [class]="'avatar ' + profesor().color">{{ profesor().iniciales }}</span>
+            <span><strong>{{ profesor().nombre }}</strong><small>{{ form.controls.tema.value || 'Tema por definir' }}</small></span></div>
+          <dl>
+            <div><dt><mat-icon class="icon icon-sm">calendar_today</mat-icon>Fecha y hora</dt><dd>{{ borrador.fechaHora() | fechaAsesoria }}</dd></div>
+            <div><dt><mat-icon class="icon icon-sm">videocam</mat-icon>Modalidad</dt><dd>{{ form.controls.modalidad.value }}</dd></div>
+          </dl>
+        </aside>
+      </div>
+
+      <div class="sticky-action">
+        <button type="button" class="text-link" (click)="regresar()"><mat-icon class="icon">arrow_back</mat-icon>Regresar</button>
+        <button type="button" class="btn btn-primary" (click)="vista() === 'detalles' ? revisar() : confirmar()">
+          {{ vista() === 'detalles' ? 'Revisar solicitud' : 'Enviar solicitud' }}
+        </button>
+      </div>
+    </div>
+  }
+}

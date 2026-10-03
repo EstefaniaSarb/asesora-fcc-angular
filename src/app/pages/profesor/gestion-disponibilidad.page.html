@@ -1,0 +1,85 @@
+<div class="page">
+  <div class="title-with-action">
+    <app-titulo-pagina antetitulo="Configuración semanal" titulo="Mi disponibilidad" texto="Defina bloques recurrentes y marque excepciones en su agenda." />
+    <button type="button" class="btn btn-primary" (click)="guardar()"><mat-icon class="icon">save</mat-icon>Guardar cambios</button>
+  </div>
+
+  <div class="availability-summary">
+    <span><mat-icon class="icon">info</mat-icon>
+      <span><strong>{{ horasSemana() }} horas disponibles por semana</strong>
+        <small>Equivalen a {{ asesoriasPosibles() }} asesorías de {{ duracion() }} minutos.</small></span></span>
+    <label class="d-flex align-items-center gap-2">Duración de cada asesoría
+      <select [ngModel]="duracion()" (ngModelChange)="duracion.set(+$event)">
+        @for (d of duraciones; track d) { <option [value]="d">{{ d }} min</option> }
+      </select>
+    </label>
+  </div>
+
+  <div class="weekly-editor card">
+    <div class="week-header"><div><h2>Horario habitual</h2><p>Agregue uno o más bloques por día.</p></div></div>
+    <div class="weekday-list">
+      @for (d of dias(); track d.nombre) {
+        <div [class]="d.activo ? 'weekday' : 'weekday blocked'">
+          <div class="day-toggle">
+            <label class="switch"><input type="checkbox" [checked]="d.activo" (change)="alternarDia(d.nombre)" [attr.aria-label]="'Atender el ' + d.nombre" /><span></span></label>
+            <strong>{{ d.nombre }}</strong>
+          </div>
+          <div class="time-blocks">
+            @if (!d.activo) {
+              <span class="unavailable-day"><mat-icon class="icon">event_busy</mat-icon>No disponible</span>
+            } @else {
+              @for (b of d.bloques; track b.inicio; let i = $index) {
+                <span class="time-block"><mat-icon class="icon">schedule</mat-icon>{{ b.inicio }}–{{ b.fin }}
+                  <button type="button" [attr.aria-label]="'Eliminar bloque ' + b.inicio + ' a ' + b.fin" (click)="eliminarBloque(d.nombre, i)"><mat-icon class="icon icon-sm">close</mat-icon></button></span>
+              } @empty {
+                @if (agregandoEn() !== d.nombre) { <span class="muted">Sin bloques de atención</span> }
+              }
+              @if (agregandoEn() === d.nombre) {
+                <div class="add-block-form">
+                  <label class="sr-only" [for]="'inicio-' + d.nombre">Hora de inicio</label>
+                  <select [id]="'inicio-' + d.nombre" [ngModel]="nuevoInicio()" (ngModelChange)="nuevoInicio.set($event)">
+                    @for (h of horas; track h) { <option>{{ h }}</option> }
+                  </select>
+                  <span>a</span>
+                  <label class="sr-only" [for]="'fin-' + d.nombre">Hora de término</label>
+                  <select [id]="'fin-' + d.nombre" [ngModel]="nuevoFin()" (ngModelChange)="nuevoFin.set($event)">
+                    @for (h of horas; track h) { <option>{{ h }}</option> }
+                  </select>
+                  <button type="button" class="btn btn-primary" (click)="guardarBloque(d.nombre)">Agregar</button>
+                  <button type="button" class="btn btn-text" (click)="agregandoEn.set(null)">Cancelar</button>
+                  @if (errorBloque()) { <span class="error-message" role="alert"><mat-icon class="icon icon-sm">error</mat-icon>{{ errorBloque() }}</span> }
+                </div>
+              }
+            }
+          </div>
+          @if (d.activo && agregandoEn() !== d.nombre) {
+            <button type="button" class="btn btn-text" (click)="abrirBloque(d.nombre)"><mat-icon class="icon">add</mat-icon>Agregar bloque</button>
+          }
+        </div>
+      }
+    </div>
+  </div>
+
+  <section class="exceptions card">
+    <div><span class="subject-icon"><mat-icon class="icon">event_busy</mat-icon></span>
+      <span><h3>Excepciones y días no disponibles</h3><p>Bloquee fechas específicas sin cambiar su horario habitual.</p></span></div>
+    <button type="button" class="btn btn-secondary" (click)="agregandoExcepcion.set(true)" [disabled]="agregandoExcepcion()"><mat-icon class="icon">add</mat-icon>Agregar excepción</button>
+    @if (agregandoExcepcion()) {
+      <div class="exception-form">
+        <div class="field"><label for="fecha-excepcion">Fecha</label><input id="fecha-excepcion" type="date" min="2026-10-12" [ngModel]="nuevaFecha()" (ngModelChange)="nuevaFecha.set($event)" /></div>
+        <div class="field"><label for="motivo-excepcion">Motivo</label><input id="motivo-excepcion" [ngModel]="nuevoMotivo()" (ngModelChange)="nuevoMotivo.set($event)" placeholder="Ej. Congreso académico" /></div>
+        <button type="button" class="btn btn-primary" [disabled]="!nuevaFecha() || !nuevoMotivo().trim()" (click)="guardarExcepcion()">Guardar</button>
+        <button type="button" class="btn btn-text" (click)="agregandoExcepcion.set(false)">Cancelar</button>
+      </div>
+    }
+    @for (e of excepciones(); track e.fecha) {
+      <div class="exception-row">
+        <span><strong>{{ e.fecha | fechaAsesoria: 'corta' }}</strong><small>{{ e.motivo }}</small></span>
+        <span></span>
+        <button type="button" [attr.aria-label]="'Eliminar excepción del ' + (e.fecha | fechaAsesoria: 'corta')" (click)="eliminarExcepcion(e.fecha)"><mat-icon class="icon">delete</mat-icon></button>
+      </div>
+    } @empty {
+      <app-estado-vacio [compacto]="true" icono="event_available" titulo="Sin excepciones" texto="Su horario habitual aplica todas las semanas." />
+    }
+  </section>
+</div>

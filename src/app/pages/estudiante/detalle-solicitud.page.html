@@ -1,0 +1,85 @@
+@if (solicitud(); as s) {
+  <div class="page">
+    <app-migas-pan [migas]="[{ etiqueta: 'Mis solicitudes', ruta: '/estudiante/solicitudes' }, { etiqueta: s.folio }]" />
+    <div class="detail-heading">
+      <div><span class="eyebrow">{{ s.folio }}</span><h1>{{ s.tema }}</h1><p>{{ s.materia }}</p></div>
+      <app-chip-estado [estado]="s.estado" />
+    </div>
+    <div class="detail-grid">
+      <section class="card session-detail">
+        <div class="section-heading compact">
+          <h2>Datos de la asesoría</h2>
+          @if (s.estado === 'Confirmada') {
+            <button type="button" class="btn btn-secondary" (click)="agregarACalendario()"><mat-icon class="icon">calendar_add_on</mat-icon>Agregar a calendario</button>
+          }
+        </div>
+        <div class="session-callout">
+          <div class="date-tile"><strong>{{ s.fechaHora | fechaAsesoria: 'dia' }}</strong><span>{{ s.fechaHora | fechaAsesoria: 'mes' }}</span></div>
+          <div><span class="eyebrow">Fecha y hora</span><strong>{{ s.fechaHora | fechaAsesoria }}</strong><small>Duración estimada: 45 minutos</small></div>
+        </div>
+        <dl class="detail-list">
+          <div><dt><mat-icon class="icon">person</mat-icon>Docente</dt><dd>{{ profesor()?.nombre }}</dd></div>
+          <div><dt><mat-icon class="icon">videocam</mat-icon>Modalidad</dt><dd>{{ s.modalidad }}</dd></div>
+          <div><dt><mat-icon class="icon">location_on</mat-icon>Ubicación</dt><dd>{{ s.ubicacion }}</dd></div>
+          <div><dt><mat-icon class="icon">attach_file</mat-icon>Archivo adjunto</dt><dd>{{ s.adjunto ? s.adjunto.nombre + ' (' + s.adjunto.tamano + ')' : 'Sin archivo' }}</dd></div>
+          <div><dt><mat-icon class="icon">subject</mat-icon>Tu duda</dt><dd>{{ s.descripcion }}</dd></div>
+        </dl>
+
+        @if (s.estado === 'Reprogramación propuesta') {
+          <div class="warning-note proposal-note" role="status">
+            <mat-icon class="icon">event_repeat</mat-icon>
+            <div>
+              <strong>El docente propuso otro horario</strong>
+              <p><b>{{ s.horarioPropuesto | fechaAsesoria }}</b>. Acepta el cambio o rechaza la propuesta.</p>
+              <div class="inline-actions">
+                <button type="button" class="btn btn-primary" (click)="responder(true)">Aceptar nuevo horario</button>
+                <button type="button" class="btn btn-secondary" (click)="responder(false)">Rechazar propuesta</button>
+              </div>
+            </div>
+          </div>
+        }
+
+        @if (s.estado === 'Rechazada') {
+          <div class="rejection-note" role="status">
+            <mat-icon class="icon">cancel</mat-icon>
+            <div>
+              <strong>La solicitud fue rechazada</strong>
+              <p><b>Motivo:</b> {{ s.motivoRechazo || 'El docente no indicó un motivo.' }}</p>
+              <div class="inline-actions">
+                <button type="button" class="btn btn-primary" (click)="elegirOtroHorario()"><mat-icon class="icon">calendar_month</mat-icon>Elegir otro horario</button>
+                <button type="button" class="btn btn-secondary" (click)="buscarOtroDocente()"><mat-icon class="icon">group</mat-icon>Buscar otro docente</button>
+              </div>
+            </div>
+          </div>
+        }
+
+        @if (s.estado === 'Pendiente' || s.estado === 'Confirmada') {
+          <div class="danger-zone">
+            <button type="button" (click)="cancelar()">Cancelar solicitud</button>
+            <span>Esta acción no se puede deshacer.</span>
+          </div>
+        }
+      </section>
+
+      <aside class="card timeline-card">
+        <h2>Historial</h2>
+        <ol class="timeline list-unstyled m-0">
+          @for (h of s.historial; track $index; let ultimo = $last) {
+            <li [class]="ultimo ? 'timeline-item current' : 'timeline-item'">
+              <span><mat-icon class="icon icon-sm">{{ ultimo ? 'radio_button_checked' : 'check' }}</mat-icon></span>
+              <div><strong>{{ h.estado }}</strong><p>{{ h.detalle }}</p><small>{{ h.fecha | fechaAsesoria }}</small></div>
+            </li>
+          }
+        </ol>
+        <div class="notification-note"><mat-icon class="icon">notifications_active</mat-icon>
+          <span><strong>Te mantendremos al tanto</strong><small>Recibirás notificaciones sobre cualquier cambio.</small></span></div>
+      </aside>
+    </div>
+  </div>
+} @else {
+  <div class="page narrow-page">
+    <app-estado-vacio icono="search_off" titulo="No encontramos esa solicitud" [texto]="'El folio ' + folio() + ' no existe o no pertenece a tu cuenta.'">
+      <a class="btn btn-secondary" routerLink="/estudiante/solicitudes">Ir a Mis solicitudes</a>
+    </app-estado-vacio>
+  </div>
+}

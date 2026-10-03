@@ -1,0 +1,86 @@
+<div class="page">
+  <section class="welcome-row">
+    <div>
+      <span class="eyebrow">{{ reloj.hoy | fechaAsesoria: 'larga' }}</span>
+      <h1>Hola, {{ nombreCorto }}</h1>
+      <p>¿Qué tema quieres resolver hoy?</p>
+    </div>
+    <div class="semester-chip"><mat-icon class="icon">school</mat-icon><span><small>Periodo actual</small><strong>Otoño 2026</strong></span></div>
+  </section>
+
+  <section class="search-hero" aria-labelledby="titulo-busqueda">
+    <div><span class="eyebrow light">Encuentra una asesoría</span><h2 id="titulo-busqueda">Busca por materia o escribe un tema específico</h2></div>
+    <form class="main-search" role="search" (ngSubmit)="buscar()">
+      <mat-icon class="icon">search</mat-icon>
+      <label class="sr-only" for="busqueda-inicio">Materia o tema</label>
+      <input id="busqueda-inicio" name="q" [ngModel]="busqueda()" (ngModelChange)="busqueda.set($event)"
+        placeholder="Ej. recursividad, punteros en C, Bases de Datos…" autocomplete="off" />
+      <button type="submit" class="btn btn-primary">Buscar</button>
+    </form>
+    <div class="suggestions">
+      <span>Búsquedas frecuentes:</span>
+      @for (s of sugerencias; track s) { <button type="button" (click)="buscar(s)">{{ s }}</button> }
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-heading">
+      <div><span class="eyebrow">Continúa donde te quedaste</span><h2>Tu próxima asesoría</h2></div>
+      @if (proxima(); as p) {
+        <a class="text-link" [routerLink]="['/estudiante/solicitudes', p.folio]">Ver detalle <mat-icon class="icon icon-sm">arrow_forward</mat-icon></a>
+      }
+    </div>
+    @if (proxima(); as p) {
+      <article class="upcoming-card">
+        <div class="date-tile"><strong>{{ p.fechaHora | fechaAsesoria: 'dia' }}</strong><span>{{ p.fechaHora | fechaAsesoria: 'mes' }}</span></div>
+        <div class="upcoming-main"><app-chip-estado [estado]="p.estado" /><h3>{{ p.materia }}</h3><p>{{ p.tema }} · con {{ profesorDe(p.profesorId) }}</p></div>
+        <div class="session-facts">
+          <span><mat-icon class="icon">schedule</mat-icon>{{ p.fechaHora | fechaAsesoria: 'hora' }} h · 45 min</span>
+          <span><mat-icon class="icon">location_on</mat-icon>{{ p.ubicacion }}</span>
+        </div>
+        <a class="btn btn-secondary" [routerLink]="['/estudiante/solicitudes', p.folio]">Ver detalles</a>
+      </article>
+    } @else {
+      <app-estado-vacio icono="event_available" titulo="No tienes asesorías confirmadas" texto="Cuando un docente confirme tu solicitud aparecerá aquí." />
+    }
+  </section>
+
+  <div class="dashboard-grid row g-4">
+    <div class="col-12 col-xl-6">
+      <section class="card">
+        <div class="section-heading compact">
+          <div><h2>Materias frecuentes</h2><p>Accede rápidamente a tus materias</p></div>
+          <a class="text-link" routerLink="/estudiante/materias">Ver todas</a>
+        </div>
+        <div class="subject-list">
+          @for (m of catalogo.materias.slice(0, 4); track m.nombre) {
+            <button type="button" (click)="buscar(m.nombre)">
+              <span class="subject-icon"><mat-icon class="icon">{{ m.icono }}</mat-icon></span>
+              <span><strong>{{ m.nombre }}</strong><small>{{ m.area }}</small></span>
+              <mat-icon class="icon">chevron_right</mat-icon>
+            </button>
+          }
+        </div>
+      </section>
+    </div>
+    <div class="col-12 col-xl-6">
+      <section class="card">
+        <div class="section-heading compact">
+          <div><h2>Solicitudes activas</h2><p>Seguimiento de tus asesorías</p></div>
+          <span class="count-badge" [attr.aria-label]="activas().length + ' solicitudes activas'">{{ activas().length }}</span>
+        </div>
+        <div class="request-mini-list">
+          @for (s of activas().slice(0, 3); track s.folio) {
+            <button type="button" [routerLink]="['/estudiante/solicitudes', s.folio]">
+              <span><strong>{{ s.tema }}</strong><small>{{ profesorDe(s.profesorId) }} · {{ s.fechaHora | fechaAsesoria }}</small></span>
+              <app-chip-estado [estado]="s.estado" />
+            </button>
+          } @empty {
+            <app-estado-vacio [compacto]="true" icono="event_note" titulo="Sin solicitudes activas" texto="Busca una materia para solicitar tu primera asesoría." />
+          }
+        </div>
+        <a class="btn btn-secondary w-100" routerLink="/estudiante/solicitudes">Ver todas mis solicitudes</a>
+      </section>
+    </div>
+  </div>
+</div>

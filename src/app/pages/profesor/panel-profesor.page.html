@@ -1,0 +1,64 @@
+<div class="page">
+  <section class="welcome-row">
+    <div><span class="eyebrow">{{ reloj.hoy | fechaAsesoria: 'larga' }}</span><h1>{{ saludo }}</h1><p>Este es el resumen de sus asesorías.</p></div>
+    <a class="btn btn-primary" routerLink="/profesor/disponibilidad"><mat-icon class="icon">add</mat-icon>Agregar disponibilidad</a>
+  </section>
+
+  <div class="metric-grid row g-3">
+    <div class="col-12 col-md-6 col-lg-4">
+      <article class="metric-card urgent">
+        <span><mat-icon class="icon">pending_actions</mat-icon></span>
+        <div><strong>{{ pendientes().length }}</strong><p>Solicitudes pendientes</p><small>{{ pendientes().length ? 'Requieren su atención' : 'Bandeja al día' }}</small></div>
+        <a routerLink="/profesor/solicitudes" aria-label="Ver solicitudes pendientes"><mat-icon class="icon">arrow_forward</mat-icon></a>
+      </article>
+    </div>
+    <div class="col-12 col-md-6 col-lg-4">
+      <article class="metric-card">
+        <span><mat-icon class="icon">today</mat-icon></span>
+        <div><strong>{{ hoy().length }}</strong><p>Asesorías hoy</p>
+          <small>{{ hoy().length ? 'La próxima es a las ' + (hoy()[0].fechaHora | fechaAsesoria: 'hora') + ' h' : 'Sin asesorías confirmadas hoy' }}</small></div>
+      </article>
+    </div>
+    <div class="col-12 col-lg-4">
+      <article class="metric-card">
+        <span><mat-icon class="icon">date_range</mat-icon></span>
+        <div><strong>{{ semana().length }}</strong><p>Esta semana</p><small>{{ confirmadas().length }} confirmadas · {{ pendientes().length }} pendientes</small></div>
+      </article>
+    </div>
+  </div>
+
+  <div class="teacher-grid row g-4">
+    <div class="col-12 col-lg-8">
+      <section class="card agenda-card h-100">
+        <div class="section-heading compact">
+          <div><span class="eyebrow">Agenda</span><h2>Próximas asesorías confirmadas</h2></div>
+          <a class="text-link" routerLink="/profesor/solicitudes">Ver bandeja</a>
+        </div>
+        <div class="agenda-list">
+          @for (s of confirmadas(); track s.folio; let primera = $first) {
+            <div class="agenda-item agenda-item-actions">
+              <span class="agenda-time"><strong>{{ s.fechaHora | fechaAsesoria: 'hora' }}</strong><small>{{ s.fechaHora | fechaAsesoria: 'corta' }}</small></span>
+              <i></i>
+              <span><strong>{{ s.estudiante.nombre }}</strong><small>{{ s.tema }} · {{ s.materia }}</small></span>
+              <app-chip-estado [estado]="s.estado" />
+              <div class="agenda-actions">
+                <button type="button" class="btn btn-text" (click)="completar(s)"><mat-icon class="icon">task_alt</mat-icon>Completada</button>
+                <button type="button" class="btn btn-text" (click)="inasistencia(s)"><mat-icon class="icon">person_off</mat-icon>Inasistencia</button>
+              </div>
+            </div>
+          } @empty {
+            <app-estado-vacio [compacto]="true" icono="event_available" titulo="Sin asesorías próximas" texto="Las solicitudes confirmadas aparecerán en esta agenda." />
+          }
+        </div>
+      </section>
+    </div>
+    <div class="col-12 col-lg-4">
+      <aside class="card quick-card h-100">
+        <h2>Acciones rápidas</h2>
+        <a routerLink="/profesor/solicitudes"><span><mat-icon class="icon">inbox</mat-icon></span><div><strong>Revisar solicitudes</strong><small>{{ pendientes().length }} esperan respuesta</small></div><mat-icon class="icon">chevron_right</mat-icon></a>
+        <a routerLink="/profesor/disponibilidad"><span><mat-icon class="icon">edit_calendar</mat-icon></span><div><strong>Gestionar disponibilidad</strong><small>Edite sus horarios semanales</small></div><mat-icon class="icon">chevron_right</mat-icon></a>
+        <a routerLink="/notificaciones"><span><mat-icon class="icon">notifications</mat-icon></span><div><strong>Notificaciones</strong><small>Cambios y recordatorios</small></div><mat-icon class="icon">chevron_right</mat-icon></a>
+      </aside>
+    </div>
+  </div>
+</div>

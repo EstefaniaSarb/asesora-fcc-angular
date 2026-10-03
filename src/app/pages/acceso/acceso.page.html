@@ -1,0 +1,49 @@
+<div class="login-page">
+  <div class="login-brand">
+    <div class="logo-mark large"><mat-icon class="icon icon-lg">school</mat-icon></div>
+    <div>
+      <span class="eyebrow light">Facultad de Ciencias de la Computación</span>
+      <h1>Asesora<span>FCC</span></h1>
+    </div>
+    <div class="brand-copy">
+      <h2>La asesoría que necesitas, cuando la necesitas.</h2>
+      <p>Encuentra docentes por tema, consulta horarios disponibles y da seguimiento a tus solicitudes en un solo lugar.</p>
+    </div>
+    <div class="brand-points">
+      <span><mat-icon class="icon">search</mat-icon> Encuentra al docente indicado</span>
+      <span><mat-icon class="icon">calendar_month</mat-icon> Agenda sin correos ni esperas</span>
+      <span><mat-icon class="icon">notifications_active</mat-icon> Recibe confirmaciones y recordatorios</span>
+    </div>
+  </div>
+
+  <main class="login-panel">
+    <div class="login-card">
+      <div class="mobile-logo"><div class="logo-mark"><mat-icon class="icon">school</mat-icon></div><strong>AsesoraFCC</strong></div>
+      <span class="eyebrow">Acceso institucional</span>
+      <h2>Te damos la bienvenida</h2>
+      <p class="muted">Para este prototipo, selecciona el perfil con el que deseas ingresar.</p>
+
+      <fieldset class="role-selector">
+        <legend>Selecciona tu perfil</legend>
+        <label [class]="rol() === 'estudiante' ? 'role-card selected' : 'role-card'">
+          <input type="radio" name="rol" [checked]="rol() === 'estudiante'" (change)="rol.set('estudiante')" />
+          <span class="role-icon"><mat-icon class="icon icon-lg">person</mat-icon></span>
+          <span><strong>Estudiante</strong><small>Buscar y solicitar asesorías</small></span>
+          <mat-icon class="icon">{{ rol() === 'estudiante' ? 'radio_button_checked' : 'radio_button_unchecked' }}</mat-icon>
+        </label>
+        <label [class]="rol() === 'profesor' ? 'role-card selected' : 'role-card'">
+          <input type="radio" name="rol" [checked]="rol() === 'profesor'" (change)="rol.set('profesor')" />
+          <span class="role-icon"><mat-icon class="icon icon-lg">co_present</mat-icon></span>
+          <span><strong>Profesor o profesora</strong><small>Gestionar solicitudes y horarios</small></span>
+          <mat-icon class="icon">{{ rol() === 'profesor' ? 'radio_button_checked' : 'radio_button_unchecked' }}</mat-icon>
+        </label>
+      </fieldset>
+
+      <button type="button" class="btn btn-primary" (click)="ingresar()">
+        <mat-icon class="icon">login</mat-icon>Ingresar con cuenta institucional
+      </button>
+      <p class="login-help"><mat-icon class="icon icon-sm">lock</mat-icon> Acceso seguro mediante el portal de la universidad</p>
+    </div>
+    <p class="support">Prototipo académico del Diplomado en Ciencias de la Computación, FCC-BUAP.</p>
+  </main>
+</div>

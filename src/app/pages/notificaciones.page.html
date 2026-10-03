@@ -1,0 +1,44 @@
+<div class="page notification-page">
+  <app-migas-pan [migas]="[{ etiqueta: 'Inicio', ruta: sesion.inicioDe() }, { etiqueta: 'Notificaciones' }]" />
+  <div class="title-with-action">
+    <app-titulo-pagina [antetitulo]="sesion.esEstudiante() ? 'Espacio del estudiante' : 'Espacio docente'"
+      titulo="Centro de notificaciones" texto="Consulta cambios de estado, nuevas solicitudes y recordatorios." />
+    <button type="button" class="btn btn-secondary" [disabled]="noLeidas() === 0" (click)="marcarTodas()"><mat-icon class="icon">done_all</mat-icon>Marcar todo como leído</button>
+  </div>
+  <div class="notification-toolbar">
+    <div class="tab-bar" role="tablist">
+      @for (f of filtros; track f) {
+        <button type="button" role="tab" [attr.aria-selected]="filtro() === f" [class.active]="filtro() === f" (click)="filtro.set(f)">
+          {{ f }}<span>{{ f === 'Todas' ? delRol().length : noLeidas() }}</span>
+        </button>
+      }
+    </div>
+    <p>Los avisos se conservan durante 30 días.</p>
+  </div>
+
+  @if (visibles().length) {
+    <section class="notification-list card" aria-label="Lista de notificaciones">
+      @for (n of visibles(); track n.id) {
+        <article [class]="n.leida ? 'notification-item' : 'notification-item unread'">
+          <span [class]="'notification-type notification-type-' + n.tipo"><mat-icon class="icon">{{ iconos[n.tipo] }}</mat-icon></span>
+          <button type="button" class="notification-content" (click)="abrir(n)">
+            <span class="notification-title-row"><strong>{{ n.titulo }}</strong>@if (!n.leida) { <i>Nuevo</i> }</span>
+            <span>{{ n.texto }}</span>
+            <small>{{ n.fecha | fechaAsesoria }}</small>
+          </button>
+          <button type="button" class="notification-read-button" [matTooltip]="n.leida ? 'Marcar como no leído' : 'Marcar como leído'"
+            [attr.aria-label]="n.leida ? 'Marcar como no leído' : 'Marcar como leído'" (click)="alternar(n)">
+            <mat-icon class="icon">{{ n.leida ? 'mark_email_unread' : 'done' }}</mat-icon>
+          </button>
+          <button type="button" class="notification-open-button" [attr.aria-label]="'Abrir: ' + n.titulo" (click)="abrir(n)"><mat-icon class="icon">chevron_right</mat-icon></button>
+        </article>
+      }
+    </section>
+  } @else {
+    <app-estado-vacio
+      [icono]="filtro() === 'No leídas' ? 'mark_email_read' : 'notifications_none'"
+      [titulo]="filtro() === 'No leídas' ? 'No tienes avisos pendientes' : 'Aún no hay notificaciones'"
+      [texto]="filtro() === 'No leídas' ? 'Ya revisaste todas las notificaciones de este perfil.' : 'Aquí aparecerán las novedades relacionadas con tus asesorías.'"
+      [accion]="filtro() === 'No leídas' ? 'Ver todas' : undefined" (accionar)="filtro.set('Todas')" />
+  }
+</div>

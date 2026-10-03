@@ -1,0 +1,59 @@
+<div class="page">
+  <app-migas-pan [migas]="[{ etiqueta: 'Inicio', ruta: '/estudiante/inicio' }, { etiqueta: 'Buscar asesoría', ruta: '/estudiante/materias' }, { etiqueta: titulo() }]" />
+  <div class="title-with-action">
+    <app-titulo-pagina
+      [antetitulo]="delTemaTexto()"
+      [titulo]="titulo()"
+      texto="Compara experiencia, modalidad y el horario libre más cercano." />
+    <a class="btn btn-secondary" routerLink="/estudiante/materias"><mat-icon class="icon">edit</mat-icon>Cambiar búsqueda</a>
+  </div>
+
+  <ng-template #filtros>
+    <aside class="filters card" aria-label="Filtros">
+      <div class="filter-title"><h3>Filtros</h3><button type="button" (click)="limpiarFiltros()">Limpiar</button></div>
+      <fieldset>
+        <legend>Modalidad</legend>
+        @for (m of modalidades; track m) {
+          <label><input type="radio" name="modalidad" [checked]="modalidad() === m" (change)="modalidad.set(m)" />{{ m }}</label>
+        }
+      </fieldset>
+      <fieldset>
+        <legend>Disponibilidad</legend>
+        <label><input type="checkbox" [checked]="soloHoy()" (change)="soloHoy.set(!soloHoy())" /> Hoy</label>
+        <label><input type="checkbox" [checked]="estaSemana()" (change)="estaSemana.set(!estaSemana())" /> Esta semana</label>
+      </fieldset>
+      <button type="button" class="btn btn-primary w-100 mt-3 d-lg-none" (click)="cerrarFiltros()">Ver {{ resultados().length }} resultados</button>
+    </aside>
+  </ng-template>
+
+  <div class="results-layout">
+    <div class="d-none d-lg-block"><ng-container [ngTemplateOutlet]="filtros" /></div>
+    <section aria-live="polite">
+      <div class="result-controls">
+        <button type="button" class="btn btn-secondary filters-button d-lg-none" (click)="abrirFiltros()">
+          <mat-icon class="icon">tune</mat-icon>Filtros @if (filtrosActivos()) { ({{ filtrosActivos() }}) }
+        </button>
+        <p><strong>{{ resultados().length }} {{ resultados().length === 1 ? 'resultado' : 'resultados' }}</strong></p>
+        <label>Ordenar por
+          <select [ngModel]="orden()" (ngModelChange)="orden.set($event)">
+            <option value="proximo">Horario más próximo</option>
+            <option value="nombre">Nombre</option>
+          </select>
+        </label>
+      </div>
+      <div class="professor-list">
+        @for (r of resultados(); track r.profesor.id) {
+          <app-tarjeta-profesor [profesor]="r.profesor" [proximo]="r.proximo" (seleccionar)="elegir(r)" />
+        } @empty {
+          @if (filtrosActivos()) {
+            <app-estado-vacio icono="filter_alt_off" titulo="Ningún docente cumple los filtros" texto="Quita algún filtro para ver más opciones." accion="Limpiar filtros" (accionar)="limpiarFiltros()" />
+          } @else {
+            <app-estado-vacio icono="person_search" titulo="Ningún docente atiende ese tema" texto="Prueba con el nombre de la materia o con un tema más general.">
+              <a class="btn btn-secondary" routerLink="/estudiante/materias">Ver catálogo de materias</a>
+            </app-estado-vacio>
+          }
+        }
+      </div>
+    </section>
+  </div>
+</div>

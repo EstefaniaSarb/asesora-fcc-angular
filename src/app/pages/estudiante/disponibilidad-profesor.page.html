@@ -1,0 +1,72 @@
+@if (profesor(); as p) {
+  <div class="page">
+    <app-migas-pan [migas]="[
+      { etiqueta: 'Inicio', ruta: '/estudiante/inicio' },
+      { etiqueta: q() || 'Docentes', ruta: '/estudiante/profesores', consulta: q() ? { q: q() } : undefined },
+      { etiqueta: p.nombre }, { etiqueta: 'Disponibilidad' }]" />
+
+    <div class="profile-header card">
+      <div [class]="'avatar avatar-xl ' + p.color" aria-hidden="true">{{ p.iniciales }}</div>
+      <div>
+        <span class="eyebrow">Disponibilidad de</span>
+        <h1>{{ p.nombre }}</h1>
+        <p>{{ p.materias.join(' · ') }}</p>
+        <div class="professor-meta">
+          <span><mat-icon class="icon">videocam</mat-icon>{{ modalidades(p.modalidades) }}</span>
+          <span><mat-icon class="icon">location_on</mat-icon>{{ p.ubicacion }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="progress-steps" aria-label="Progreso de la solicitud">
+      <span class="done"><b>1</b>Docente</span><i></i><span class="current" aria-current="step"><b>2</b>Horario</span><i></i><span><b>3</b>Detalles</span><i></i><span><b>4</b>Confirmar</span>
+    </div>
+
+    <div class="calendar-card card">
+      <div class="section-heading">
+        <div><span class="eyebrow">Zona horaria: Ciudad de México</span><h2>Selecciona un horario</h2><p>Horarios de las próximas dos semanas. Cada asesoría dura 45 minutos.</p></div>
+        <div class="week-controls">
+          <button type="button" aria-label="Semana anterior" [disabled]="semana() === 0" (click)="semana.set(semana() - 1)"><mat-icon class="icon">chevron_left</mat-icon></button>
+          <strong aria-live="polite">{{ rangoSemana().inicio | fechaAsesoria: 'rango' }} al {{ rangoSemana().fin | fechaAsesoria: 'rango' }}</strong>
+          <button type="button" aria-label="Semana siguiente" [disabled]="semana() === totalSemanas - 1" (click)="semana.set(semana() + 1)"><mat-icon class="icon">chevron_right</mat-icon></button>
+        </div>
+      </div>
+      <div class="slot-legend"><span><i class="legend-free"></i>Disponible</span><span><i class="legend-busy"></i>No disponible</span></div>
+
+      @if (hayHorarios()) {
+        <div class="slot-grid" role="group" aria-label="Horarios de la semana">
+          @for (d of dias(); track d.fecha) {
+            <div class="day-column">
+              <div><strong>{{ d.fecha + 'T00:00' | fechaAsesoria: 'encabezadoDia' }}</strong><small>{{ d.fecha + 'T00:00' | fechaAsesoria: 'rango' }}</small></div>
+              @for (h of d.horarios; track h.fechaHora) {
+                <button type="button" [disabled]="h.estado !== 'disponible'" [class.selected]="seleccionado() === h.fechaHora"
+                  [attr.aria-pressed]="seleccionado() === h.fechaHora" (click)="elegir(h)"
+                  [attr.aria-label]="(h.fechaHora | fechaAsesoria) + ', ' + etiquetaHorario(h)">
+                  {{ h.fechaHora | fechaAsesoria: 'hora' }}<small>{{ etiquetaHorario(h) }}</small>
+                </button>
+              } @empty {
+                <small class="muted text-center py-2">Sin horario</small>
+              }
+            </div>
+          }
+        </div>
+      } @else {
+        <app-estado-vacio [compacto]="true" icono="event_busy" titulo="Sin horarios esta semana" texto="Prueba con la siguiente semana o elige a otro docente." />
+      }
+    </div>
+
+    <div class="sticky-action">
+      <a class="text-link" routerLink="/estudiante/profesores" [queryParams]="q() ? { q: q() } : {}"><mat-icon class="icon">arrow_back</mat-icon>Volver a docentes</a>
+      <div>
+        <span aria-live="polite">{{ seleccionado() ? 'Horario seleccionado: ' + (seleccionado() | fechaAsesoria) : 'Selecciona un horario para continuar' }}</span>
+        <button type="button" class="btn btn-primary" [disabled]="!seleccionado()" (click)="continuar()">Continuar</button>
+      </div>
+    </div>
+  </div>
+} @else {
+  <div class="page narrow-page">
+    <app-estado-vacio icono="person_off" titulo="Docente no encontrado" texto="El enlace no corresponde a ningún docente del catálogo.">
+      <a class="btn btn-secondary" routerLink="/estudiante/materias">Buscar asesoría</a>
+    </app-estado-vacio>
+  </div>
+}

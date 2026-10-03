@@ -1,0 +1,23 @@
+/* Perfil */
+.profile-page { max-width: 1100px; }
+.profile-identity { min-height: 136px; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 20px; padding: 24px; margin-bottom: 20px; background: linear-gradient(100deg, white 65%, #e9f6fa); }
+.profile-identity h2 { font-size: 1.4rem; margin: 0; }.profile-identity p { color: var(--muted); margin: 5px 0 0; }
+.profile-layout { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(300px, 1fr); gap: 20px; align-items: start; }
+.profile-section { padding: 24px; }
+.profile-section-heading { display: flex; align-items: center; gap: 12px; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+.profile-section-heading > span { width: 44px; height: 44px; display: grid; place-items: center; color: var(--primary); background: #e5f2f7; border-radius: var(--radius-sm); flex: none; }
+.profile-section-heading > div { flex: 1; }.profile-section-heading h2, .profile-section-heading p { margin: 0; }.profile-section-heading p { color: var(--muted); font-size: .8rem; margin-top: 3px; }
+.academic-data { display: grid; grid-template-columns: 1fr 1fr; gap: 0 24px; margin: 0; }
+.academic-data div { padding: 17px 0; border-bottom: 1px solid var(--line); }.academic-data .wide { grid-column: 1/-1; }
+.academic-data dt { color: var(--muted); font-size: .75rem; margin-bottom: 6px; }.academic-data dd { margin: 0; font-weight: 600; overflow-wrap: anywhere; }
+.sync-note { display: flex; align-items: center; gap: 7px; color: var(--muted); font-size: .75rem; margin-top: 16px; }
+.preference-list { margin-bottom: 20px; }
+.preference-list > label { min-height: 78px; display: flex; align-items: center; justify-content: space-between; gap: 12px; border-bottom: 1px solid var(--line); cursor: pointer; }
+.preference-list strong, .preference-list small { display: block; }.preference-list small { color: var(--muted); margin-top: 4px; }
+.reminder-section > .field { margin-bottom: 18px; }
+.teaching-section { margin-top: 20px; }.teaching-section .profile-section-heading > .btn { margin-left: auto; }
+.teaching-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 20px; }
+.teaching-grid article { display: flex; align-items: flex-start; gap: 12px; padding: 16px; background: var(--background); border-radius: var(--radius-sm); }
+.teaching-grid h3 { margin-top: 2px; }.teaching-grid .tags { margin-bottom: 0; }
+.profile-save { display: flex; align-items: center; justify-content: flex-end; gap: 20px; padding: 20px 0 0; }
+.profile-save p { color: var(--muted); font-size: .8rem; margin: 0; }

@@ -1,0 +1,78 @@
+// =====================================================================
+// Integración de Angular Material y Bootstrap con el diseño de Figma
+// =====================================================================
+
+// mat-icon usa la fuente Material Symbols (configurada en app.config.ts)
+.mat-icon.icon { width: auto; height: auto; font-size: 22px; line-height: 1; overflow: visible; }
+.mat-icon.icon-sm { font-size: 18px; }
+.mat-icon.icon-lg { font-size: 30px; }
+
+// Enlaces del router con apariencia de botón o enlace del diseño
+a.btn, a.text-link, a.nav-item, a.brand-button { text-decoration: none; }
+.breadcrumb a { color: inherit; text-decoration: none; min-height: 32px; padding: 2px 4px; font-size: .8rem; display: inline-flex; align-items: center; border-radius: 6px; }
+.breadcrumb a:hover { color: var(--primary); text-decoration: underline; }
+.breadcrumb span.actual { color: var(--text); font-weight: 600; font-size: .8rem; padding: 2px 4px; }
+
+// Menú de perfil (MatMenu)
+.mat-mdc-menu-panel.profile-menu-panel { min-width: 260px; border-radius: var(--radius); padding: 0; }
+.profile-menu-panel .mat-mdc-menu-content { padding: 8px; }
+.profile-menu-panel .mat-mdc-menu-item { min-height: 64px; border-radius: var(--radius-sm); }
+.profile-menu-panel .mat-mdc-menu-item .mat-icon { color: var(--primary); margin-right: 12px; }
+.profile-menu-panel strong, .profile-menu-panel small { display: block; }
+.profile-menu-panel strong { color: var(--text); font-size: .9rem; }
+.profile-menu-panel small { color: var(--muted); font-size: .75rem; margin-top: 2px; }
+
+// Diálogo de confirmación (MatDialog) con el estilo del modal de Figma
+.asesora-dialog .mat-mdc-dialog-surface { border-radius: var(--radius-lg) !important; }
+.asesora-dialog .modal { box-shadow: none; width: 100%; }
+
+// Avisos (MatSnackBar) con el estilo del toast de Figma
+.mat-mdc-snack-bar-container.aviso-exito {
+  --mdc-snackbar-container-color: #153f31;
+  --mat-snack-bar-button-color: #7fe1b4;
+  --mdc-snackbar-supporting-text-color: #fff;
+}
+.mat-mdc-snack-bar-container.aviso-error {
+  --mdc-snackbar-container-color: #5c1712;
+  --mat-snack-bar-button-color: #ffb4ab;
+  --mdc-snackbar-supporting-text-color: #fff;
+}
+
+// Panel inferior de filtros en móvil (MatBottomSheet)
+.filtros-sheet .mat-bottom-sheet-container { border-radius: var(--radius-lg) var(--radius-lg) 0 0; padding: 8px 20px 24px; }
+.filtros-sheet .filters { position: static; border: 0; box-shadow: none; padding: 8px 0; }
+
+// Contenedores que ahora usan la retícula de Bootstrap
+.subject-grid.row, .dashboard-grid.row, .metric-grid.row, .teacher-grid.row { display: flex; }
+.metric-grid.row { margin-bottom: 24px; }
+.metric-grid .metric-card { height: 100%; }
+.subject-grid .subject-card { width: 100%; height: 100%; }
+.dashboard-grid > [class*='col'] > .card { padding: 24px; height: 100%; }
+
+// Botón de filtros visible solo en pantallas menores a 992 px
+.filters-button { margin-bottom: 12px; }
+
+// Elementos agregados en la conversión
+.add-block-form { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.add-block-form select { min-height: 40px; border: 1px solid #aebbc4; border-radius: var(--radius-sm); padding: 0 8px; background: white; }
+.add-block-form .error-message { width: 100%; }
+.exception-form { grid-column: 1 / -1; display: grid; grid-template-columns: 180px 1fr auto auto; gap: 8px; align-items: end; }
+.attachment-chosen { display: flex; align-items: center; gap: 8px; color: var(--primary); font-weight: 600; font-size: .85rem; }
+.cdk-visually-hidden-file { position: absolute; width: 1px; height: 1px; opacity: 0; overflow: hidden; }
+.demo-banner { display: flex; align-items: center; gap: 8px; font-size: .75rem; color: var(--muted); margin-top: 16px; }
+@media (max-width: 767px) {
+  .exception-form { grid-template-columns: 1fr; }
+}
+a.subject-card, button.subject-card { color: inherit; text-decoration: none; }
+.request-mini-list a, a.request-row { color: inherit; text-decoration: none; }
+.filtros-sheet .filters { display: block !important; }
+.result-controls { gap: 12px; flex-wrap: wrap; }
+.result-controls .filters-button { margin: 0; }
+.quick-card > a, .metric-card > a { text-decoration: none; color: inherit; }
+.metric-card > a { color: var(--primary); }
+.availability-summary label { color: var(--primary); font-size: .85rem; font-weight: 600; }
+.availability-summary select { min-height: 40px; border: 1px solid #a9becb; border-radius: var(--radius-sm); padding: 0 8px; background: white; color: var(--text); }
+// Las filas de Bootstrap ya manejan el espacio con g-*; se anula el gap del diseño original
+.subject-grid.row, .dashboard-grid.row, .metric-grid.row, .teacher-grid.row { gap: 0; }
+.filters fieldset + fieldset { margin-top: 8px; }
+.weekday > .btn-text { white-space: nowrap; justify-self: end; }

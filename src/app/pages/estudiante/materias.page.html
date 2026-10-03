@@ -1,0 +1,45 @@
+<div class="page">
+  <app-migas-pan [migas]="[{ etiqueta: 'Inicio', ruta: '/estudiante/inicio' }, { etiqueta: 'Buscar asesoría' }]" />
+  <app-titulo-pagina antetitulo="Catálogo académico" titulo="¿En qué necesitas asesoría?" texto="Busca por nombre o explora las materias por área." />
+
+  <div class="toolbar card">
+    <div class="field search-field">
+      <label for="buscar-materia">Buscar materia o tema</label>
+      <div><mat-icon class="icon">search</mat-icon>
+        <input id="buscar-materia" [ngModel]="busqueda()" (ngModelChange)="busqueda.set($event)" placeholder="Ej. Cálculo, APIs REST o recursividad" autocomplete="off" />
+      </div>
+    </div>
+    <div class="field">
+      <label for="filtro-area">Área académica</label>
+      <select id="filtro-area" [ngModel]="area()" (ngModelChange)="area.set($event)">
+        <option>Todas</option>
+        @for (a of catalogo.areas; track a) { <option>{{ a }}</option> }
+      </select>
+    </div>
+  </div>
+
+  @if (filtradas().length) {
+    <div class="subject-grid row g-3">
+      @for (m of filtradas(); track m.nombre) {
+        <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+          <a class="subject-card" [routerLink]="['/estudiante/profesores']" [queryParams]="{ q: m.nombre }">
+            <span class="subject-icon large"><mat-icon class="icon icon-lg">{{ m.icono }}</mat-icon></span>
+            <span class="eyebrow">{{ m.area }}</span>
+            <h3>{{ m.nombre }}</h3>
+            <p>{{ m.semestre }}</p>
+            <span class="card-action">Ver docentes disponibles <mat-icon class="icon icon-sm">arrow_forward</mat-icon></span>
+          </a>
+        </div>
+      }
+    </div>
+  } @else if (esTema()) {
+    <app-estado-vacio icono="manage_search" titulo="No es el nombre de una materia"
+      [texto]="'Puedes buscar “' + busqueda() + '” como tema específico entre los temas que atienden los docentes.'">
+      <a class="btn btn-primary" [routerLink]="['/estudiante/profesores']" [queryParams]="{ q: busqueda().trim() }">Buscar como tema</a>
+    </app-estado-vacio>
+  } @else {
+    <app-estado-vacio icono="search_off" titulo="No encontramos coincidencias"
+      texto="No hay materias que coincidan con tu búsqueda. Revisa la escritura o prueba con otra palabra."
+      accion="Limpiar búsqueda" (accionar)="limpiar()" />
+  }
+</div>

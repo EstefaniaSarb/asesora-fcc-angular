@@ -1,0 +1,91 @@
+<div class="page full-width">
+  <app-titulo-pagina antetitulo="Bandeja docente" titulo="Solicitudes de asesoría" texto="Revise el contexto y responda sin salir de esta pantalla." />
+  <div class="inbox-layout">
+    <section class="inbox-list card" aria-label="Lista de solicitudes">
+      <div class="inbox-filters">
+        <div class="field search-field"><div><mat-icon class="icon">search</mat-icon>
+          <input aria-label="Buscar solicitudes" [ngModel]="busqueda()" (ngModelChange)="busqueda.set($event)" placeholder="Buscar estudiante, tema o folio" /></div></div>
+        <select aria-label="Filtrar por materia" [ngModel]="materia()" (ngModelChange)="materia.set($event)">
+          <option>Todas las materias</option>
+          @for (m of materias(); track m) { <option>{{ m }}</option> }
+        </select>
+      </div>
+      <div class="inbox-tabs" role="tablist">
+        @for (p of pestanas; track p) {
+          <button type="button" role="tab" [attr.aria-selected]="pestana() === p" [class.active]="pestana() === p" (click)="pestana.set(p)">
+            {{ p }} <b>{{ cuantas(p) }}</b>
+          </button>
+        }
+      </div>
+      @for (s of visibles(); track s.folio) {
+        <button type="button" [class]="seleccionada()?.folio === s.folio ? 'inbox-item selected' : 'inbox-item'"
+          [attr.aria-current]="seleccionada()?.folio === s.folio" (click)="seleccionar(s)">
+          <span class="avatar avatar-small avatar-blue" aria-hidden="true">{{ s.estudiante.nombre | iniciales }}</span>
+          <span><strong>{{ s.estudiante.nombre }}</strong><small>{{ s.tema }}</small><small>{{ s.materia }} · {{ s.fechaHora | fechaAsesoria }}</small></span>
+          <app-chip-estado [estado]="s.estado" />
+        </button>
+      } @empty {
+        <app-estado-vacio [compacto]="true" icono="inbox"
+          [titulo]="busqueda() ? 'Sin coincidencias' : 'Bandeja al día'"
+          [texto]="busqueda() ? 'Pruebe con otro nombre, tema o folio.' : 'No tiene solicitudes en esta sección.'" />
+      }
+    </section>
+
+    @if (seleccionada(); as s) {
+      <section class="request-inspector card" id="detalle-solicitud" aria-live="polite">
+        <div class="inspector-heading">
+          <div><span class="eyebrow">{{ s.folio }}</span><h2>{{ s.tema }}</h2><p>{{ s.materia }}</p></div>
+          <app-chip-estado [estado]="s.estado" />
+        </div>
+        <div class="student-context">
+          <span class="avatar avatar-large avatar-blue" aria-hidden="true">{{ s.estudiante.nombre | iniciales }}</span>
+          <div><span class="eyebrow">Estudiante</span><h3>{{ s.estudiante.nombre }}</h3><p>{{ s.estudiante.programa }} · {{ s.estudiante.semestre }}</p></div>
+          <span class="history-pill"><strong>{{ previas() }}</strong> {{ previas() === 1 ? 'solicitud previa' : 'solicitudes previas' }}</span>
+        </div>
+        <dl class="inspector-facts">
+          <div><dt>Fecha solicitada</dt><dd><mat-icon class="icon">calendar_today</mat-icon>{{ s.fechaHora | fechaAsesoria }}</dd></div>
+          <div><dt>Modalidad</dt><dd><mat-icon class="icon">{{ s.modalidad === 'Presencial' ? 'meeting_room' : 'videocam' }}</mat-icon>{{ s.modalidad }}</dd></div>
+          @if (s.horarioPropuesto) {
+            <div class="wide"><dt>Horario propuesto (esperando respuesta)</dt><dd><mat-icon class="icon">event_repeat</mat-icon>{{ s.horarioPropuesto | fechaAsesoria }}</dd></div>
+          }
+          <div class="wide"><dt>Descripción de la duda</dt><dd>{{ s.descripcion }}</dd></div>
+        </dl>
+        <div class="attachment">
+          <mat-icon class="icon">{{ s.adjunto ? 'description' : 'draft' }}</mat-icon>
+          @if (s.adjunto; as a) {
+            <span><strong>{{ a.nombre }}</strong><small>{{ a.tamano }}</small></span>
+            <button type="button" class="btn btn-text" (click)="verArchivo()">Ver archivo</button>
+          } @else {
+            <span><strong>Sin archivos adjuntos</strong><small>El estudiante no adjuntó evidencia</small></span>
+          }
+        </div>
+
+        @switch (s.estado) {
+          @case ('Pendiente') {
+            <div class="decision-actions">
+              <button type="button" class="btn btn-primary" (click)="aceptar(s)"><mat-icon class="icon">check</mat-icon>Aceptar solicitud</button>
+              <button type="button" class="btn btn-secondary" (click)="accion('reprogramar', s)"><mat-icon class="icon">event_repeat</mat-icon>Proponer otro horario</button>
+              <button type="button" class="btn btn-danger" (click)="accion('rechazar', s)"><mat-icon class="icon">close</mat-icon>Rechazar</button>
+            </div>
+          }
+          @case ('Confirmada') {
+            <div class="decision-actions closing-actions">
+              <button type="button" class="btn btn-primary" (click)="accion('completar', s)"><mat-icon class="icon">task_alt</mat-icon>Marcar completada</button>
+              <button type="button" class="btn btn-secondary" (click)="accion('inasistencia', s)"><mat-icon class="icon">person_off</mat-icon>Registrar inasistencia</button>
+            </div>
+          }
+          @case ('Reprogramación propuesta') {
+            <div class="info-note"><mat-icon class="icon">hourglass_top</mat-icon><p><strong>Esperando respuesta del estudiante</strong><br />Se le notificó el horario propuesto.</p></div>
+          }
+          @default {
+            <div class="info-note"><mat-icon class="icon">check_circle</mat-icon><p><strong>Solicitud cerrada</strong><br />El estado final es visible para el estudiante.</p></div>
+          }
+        }
+      </section>
+    } @else {
+      <section class="request-inspector card inspector-empty">
+        <app-estado-vacio [compacto]="true" icono="touch_app" titulo="Seleccione una solicitud" texto="El detalle y las acciones aparecerán en este panel." />
+      </section>
+    }
+  </div>
+</div>

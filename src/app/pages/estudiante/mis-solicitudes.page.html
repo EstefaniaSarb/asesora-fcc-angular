@@ -1,0 +1,30 @@
+<div class="page">
+  <div class="title-with-action">
+    <app-titulo-pagina antetitulo="Seguimiento" titulo="Mis solicitudes" texto="Consulta el estado y los detalles de tus asesorías." />
+    <a class="btn btn-primary" routerLink="/estudiante/materias"><mat-icon class="icon">add</mat-icon>Nueva solicitud</a>
+  </div>
+  <div class="tab-bar" role="tablist" aria-label="Filtrar solicitudes">
+    @for (p of pestanas; track p) {
+      <button type="button" role="tab" [attr.aria-selected]="pestana() === p" [class.active]="pestana() === p" (click)="pestana.set(p)">
+        {{ p }}<span>{{ cuantas(p) }}</span>
+      </button>
+    }
+  </div>
+  @if (visibles().length) {
+    <div class="requests-table card" role="list">
+      @for (s of visibles(); track s.folio) {
+        <a class="request-row" role="listitem" [routerLink]="['/estudiante/solicitudes', s.folio]">
+          <span class="date-box"><strong>{{ s.fechaHora | fechaAsesoria: 'dia' }}</strong><small>{{ s.fechaHora | fechaAsesoria: 'mes' }}</small></span>
+          <span class="request-primary"><strong>{{ s.tema }}</strong><small>{{ s.materia }} · {{ profesorDe(s.profesorId) }}</small></span>
+          <span class="request-date"><mat-icon class="icon">schedule</mat-icon>{{ s.fechaHora | fechaAsesoria }}</span>
+          <app-chip-estado [estado]="s.estado" />
+          <mat-icon class="icon">chevron_right</mat-icon>
+        </a>
+      }
+    </div>
+  } @else {
+    <app-estado-vacio icono="event_note" titulo="No hay solicitudes en esta sección" texto="Cuando tengas una solicitud aquí, podrás darle seguimiento.">
+      <a class="btn btn-secondary" routerLink="/estudiante/materias">Buscar asesoría</a>
+    </app-estado-vacio>
+  }
+</div>

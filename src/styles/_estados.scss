@@ -1,0 +1,5 @@
+/* Status */
+.status { width: fit-content; white-space: nowrap; display: inline-flex; align-items: center; gap: 5px; padding: 5px 9px; border-radius: 16px; color: var(--warning); background: var(--warning-soft); font-size: .72rem; font-weight: 700; }
+.status-confirmada, .status-completada { color: var(--success); background: var(--success-soft); }
+.status-rechazada, .status-cancelada, .status-inasistencia { color: var(--danger); background: var(--danger-soft); }
+.status-reprogramación-propuesta { color: var(--primary); background: #e4f1f7; }

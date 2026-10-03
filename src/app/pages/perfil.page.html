@@ -1,0 +1,82 @@
+<div class="page profile-page">
+  <app-migas-pan [migas]="[{ etiqueta: 'Inicio', ruta: sesion.inicioDe() }, { etiqueta: 'Mi perfil' }]" />
+  <app-titulo-pagina [antetitulo]="sesion.esEstudiante() ? 'Perfil del estudiante' : 'Perfil docente'"
+    titulo="Perfil y preferencias" texto="Revisa tus datos académicos y configura cómo deseas recibir recordatorios." />
+
+  <section class="profile-identity card">
+    <span [class]="'avatar avatar-xl ' + (sesion.esEstudiante() ? 'avatar-blue' : sesion.profesor.color)">{{ sesion.nombreUsuario() | iniciales }}</span>
+    <div>
+      <span class="eyebrow">{{ sesion.esEstudiante() ? 'Estudiante' : 'Profesora investigadora' }}</span>
+      <h2>{{ sesion.nombreUsuario() }}</h2>
+      <p>{{ sesion.esEstudiante() ? sesion.estudiante.programa : 'Facultad de Ciencias de la Computación' }}</p>
+    </div>
+  </section>
+
+  <div class="profile-layout">
+    <section class="card profile-section">
+      <div class="profile-section-heading">
+        <span><mat-icon class="icon">badge</mat-icon></span>
+        <div><h2>Datos académicos</h2><p>Información sincronizada con la cuenta institucional.</p></div>
+      </div>
+      <dl class="academic-data">
+        <div><dt>Nombre completo</dt><dd>{{ sesion.nombreUsuario() }}</dd></div>
+        @if (sesion.esEstudiante()) {
+          <div><dt>Correo institucional</dt><dd>daniela.hernandez&#64;alumno.buap.mx</dd></div>
+          <div><dt>Matrícula</dt><dd>202634871</dd></div>
+          <div><dt>Semestre</dt><dd>{{ sesion.estudiante.semestre }}</dd></div>
+          <div class="wide"><dt>Programa académico</dt><dd>{{ sesion.estudiante.programa }}</dd></div>
+        } @else {
+          <div><dt>Correo institucional</dt><dd>ana.torres&#64;correo.buap.mx</dd></div>
+          <div><dt>Cubículo</dt><dd>{{ sesion.profesor.ubicacion }}</dd></div>
+          <div><dt>Modalidades</dt><dd>{{ modalidades(sesion.profesor.modalidades) }}</dd></div>
+          <div class="wide"><dt>Grado académico</dt><dd>{{ sesion.profesor.grado }}</dd></div>
+        }
+      </dl>
+      <div class="sync-note"><mat-icon class="icon">sync</mat-icon><span>Última sincronización: hoy, 08:00 h</span></div>
+    </section>
+
+    <aside class="card profile-section reminder-section">
+      <div class="profile-section-heading">
+        <span><mat-icon class="icon">notifications_active</mat-icon></span>
+        <div><h2>Recordatorios</h2><p>Elige cuándo y por dónde recibirlos.</p></div>
+      </div>
+      <div class="preference-list">
+        <div class="d-flex justify-content-between align-items-center gap-3 py-2">
+          <span><strong>Notificaciones en la aplicación</strong><small class="d-block muted">Avisos en el centro de notificaciones</small></span>
+          <mat-slide-toggle [ngModel]="avisosApp()" (ngModelChange)="avisosApp.set($event)" aria-label="Notificaciones en la aplicación" />
+        </div>
+        <div class="d-flex justify-content-between align-items-center gap-3 py-2">
+          <span><strong>Correo institucional</strong><small class="d-block muted">Resumen y cambios importantes</small></span>
+          <mat-slide-toggle [ngModel]="avisosCorreo()" (ngModelChange)="avisosCorreo.set($event)" aria-label="Avisos por correo institucional" />
+        </div>
+      </div>
+      <div class="field">
+        <label for="anticipacion">Primer recordatorio</label>
+        <select id="anticipacion" [ngModel]="anticipacion()" (ngModelChange)="anticipacion.set($event)">
+          <option>24 horas antes</option><option>2 horas antes</option><option>30 minutos antes</option>
+        </select>
+      </div>
+      <div class="info-note"><mat-icon class="icon">info</mat-icon><p>Los cambios urgentes de horario siempre se mostrarán en la aplicación.</p></div>
+    </aside>
+  </div>
+
+  @if (!sesion.esEstudiante()) {
+    <section class="card profile-section teaching-section">
+      <div class="profile-section-heading">
+        <span><mat-icon class="icon">menu_book</mat-icon></span>
+        <div><h2>Materias y temas que atiendo</h2><p>Esta información ayuda a que los estudiantes encuentren su perfil.</p></div>
+      </div>
+      <div class="teaching-grid">
+        @for (d of docencia(); track d.materia.nombre) {
+          <article><span class="subject-icon"><mat-icon class="icon">{{ d.materia.icono }}</mat-icon></span>
+            <div><h3>{{ d.materia.nombre }}</h3><div class="tags">@for (t of d.temas; track t) { <span>{{ t }}</span> }</div></div></article>
+        }
+      </div>
+    </section>
+  }
+
+  <div class="profile-save">
+    <p>Los datos académicos solo pueden modificarse desde el portal institucional.</p>
+    <button type="button" class="btn btn-primary" (click)="guardar()"><mat-icon class="icon">save</mat-icon>Guardar preferencias</button>
+  </div>
+</div>

@@ -1,0 +1,69 @@
+// Puntos de quiebre alineados con Bootstrap 5 (575, 767, 991, 1199 px)
+@media (max-width: 1199px) {
+  .subject-grid { grid-template-columns: repeat(3, 1fr); }
+  .dashboard-grid { grid-template-columns: 1fr; }
+  .professor-card { grid-template-columns: auto 1fr; }.availability { grid-column: 2; border-left: 0; padding: 12px 0 0; border-top: 1px solid var(--line); }
+  .upcoming-card { grid-template-columns: auto 1fr auto; }.session-facts { grid-column: 2; border: 0; padding: 0; }.upcoming-card > .btn { grid-column: 3; grid-row: 1 / span 2; }
+  .request-row { grid-template-columns: auto minmax(180px, 1fr) 150px auto; }.request-date { display: none; }
+}
+
+@media (max-width: 991px) {
+  .sidebar { width: 210px; }.main-content { margin-left: 210px; }
+  .page { width: min(100% - 32px, 900px); padding-top: 30px; }
+  .subject-grid { grid-template-columns: repeat(2, 1fr); }
+  .results-layout { grid-template-columns: 1fr; }.filters { position: static; display: none; }
+  .detail-grid, .teacher-grid { grid-template-columns: 1fr; }.timeline-card { order: 2; }
+  .metric-grid { grid-template-columns: 1fr 1fr; }.metric-card:last-child { grid-column: 1/-1; }
+  .inbox-layout { grid-template-columns: 320px 1fr; }
+  .profile-copy { display: none; }
+  .form-layout { grid-template-columns: 1fr; }.summary-side { position: static; order: -1; }.summary-side dl { grid-template-columns: 1fr 1fr; }
+  .weekday { grid-template-columns: 120px 1fr; padding: 12px 0; }.weekday > .btn { grid-column: 2; justify-self: start; }
+  .profile-layout { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 767px) {
+  body { padding-bottom: 68px; }
+  .topbar { height: 64px; padding: 0 16px; }.brand-button { font-size: 1.05rem; }.logo-mark { width: 38px; height: 38px; }
+  .profile-button { border: 0; padding: 0; }.profile-button > .icon { display: none; }
+  .sidebar { display: none; }.main-content { margin-left: 0; padding-top: 64px; }
+  .bottom-nav { position: fixed; z-index: 40; bottom: 0; left: 0; right: 0; height: 68px; display: grid; grid-template-columns: repeat(3, 1fr); background: white; border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom); }
+  .bottom-nav button { border: 0; background: none; color: var(--muted); display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 3px; font-size: .66rem; }.bottom-nav button.active { color: var(--primary); font-weight: 700; }.bottom-nav button.active .icon { font-variation-settings: "FILL" 1; }
+  .page, .page.full-width { width: calc(100% - 28px); padding: 24px 0 40px; }
+  .welcome-row, .title-with-action { align-items: flex-start; }.welcome-row .semester-chip { display: none; }.title-with-action { flex-direction: column; }.title-with-action > .btn { width: 100%; }
+  .search-hero { padding: 24px 18px; border-radius: var(--radius); }.main-search { height: auto; min-height: 54px; flex-wrap: wrap; }.main-search input { width: calc(100% - 40px); }.main-search .btn { width: 100%; }
+  .suggestions span { width: 100%; }.upcoming-card { grid-template-columns: auto 1fr; padding: 16px; }.session-facts { grid-column: 1/-1; }.upcoming-card > .btn { grid-column: 1/-1; grid-row: auto; width: 100%; }
+  .dashboard-grid { gap: 16px; }.dashboard-grid > .card { padding: 18px; }.subject-list { grid-template-columns: 1fr; }
+  .toolbar { grid-template-columns: 1fr; padding: 16px; }.subject-grid { grid-template-columns: 1fr; }.subject-card { min-height: 200px; }
+  .breadcrumb { margin-bottom: 18px; overflow: hidden; white-space: nowrap; }.breadcrumb span:first-child { display: none; }
+  .result-controls p { display: none; }.result-controls { justify-content: flex-end; }
+  .professor-card { grid-template-columns: auto 1fr; padding: 16px; }.availability { grid-column: 1/-1; }.professor-meta { display: grid; }.tags span:nth-child(n+3) { display: none; }
+  .profile-header { align-items: flex-start; padding: 18px; }.avatar-xl { width: 62px; height: 62px; }.profile-header h1 { font-size: 1.25rem; }
+  .progress-steps { justify-content: center; margin: 20px 0; }.progress-steps span { font-size: 0; gap: 0; }.progress-steps b { font-size: .75rem; }.progress-steps i { max-width: 44px; }
+  .calendar-card { padding: 16px; overflow: hidden; }.calendar-card .section-heading { align-items: flex-start; flex-direction: column; }.slot-grid { overflow-x: auto; grid-template-columns: repeat(5, 118px); padding-bottom: 8px; }.week-controls { width: 100%; justify-content: space-between; }
+  .sticky-action { bottom: 76px; padding: 10px 12px; }.sticky-action > .text-link { font-size: 0; }.sticky-action > .text-link .icon { font-size: 24px; }.sticky-action > div > span { display: none; }
+  .form-card, .review-card { padding: 18px; }.mode-select { grid-template-columns: 1fr; }.upload-box { flex-wrap: wrap; }.upload-box .btn { width: 100%; }.review-list { grid-template-columns: 1fr; }.review-list .wide { grid-column: auto; }.review-header { grid-template-columns: auto 1fr; }.review-header > .text-link { grid-column: 2; justify-self: start; min-height: 30px; }
+  .success-actions { width: 100%; flex-direction: column; }.success-actions .btn { width: 100%; }
+  .requests-table { border: 0; background: none; }.request-row { grid-template-columns: auto 1fr auto; border: 1px solid var(--line); border-radius: var(--radius); margin-bottom: 10px; padding: 14px; }.request-row .status { grid-column: 2; }.request-row > .icon:last-child { grid-row: 1 / span 2; grid-column: 3; }.detail-heading { align-items: flex-start; flex-direction: column; }.detail-list { grid-template-columns: 1fr; }.detail-list div:last-child { grid-column: auto; }.session-detail, .timeline-card { padding: 18px; }.session-detail .section-heading { align-items: flex-start; flex-direction: column; }.danger-zone { align-items: flex-start; flex-direction: column; }
+  .metric-grid { grid-template-columns: 1fr; }.metric-card:last-child { grid-column: auto; }.agenda-card, .quick-card { padding: 16px; }.agenda-item { grid-template-columns: 58px 3px 1fr auto; }.agenda-item .status { display: none; }.agenda-item > button { display: none; }
+  .inbox-layout { display: block; height: auto; min-height: 0; }.inbox-list { max-height: none; }.request-inspector { margin-top: 16px; padding: 18px; }.inbox-filters { grid-template-columns: 1fr; }.student-context { grid-template-columns: auto 1fr; }.history-pill { grid-column: 2; align-items: flex-start; flex-direction: row; gap: 5px; width: fit-content; }.inspector-facts { grid-template-columns: 1fr; }.inspector-facts .wide { grid-column: auto; }.decision-actions .btn { width: 100%; }
+  .availability-summary { align-items: flex-start; flex-direction: column; }.weekly-editor { padding: 16px; }.week-header { align-items: flex-start; flex-direction: column; gap: 14px; }.weekday { grid-template-columns: 1fr; gap: 10px; }.weekday > .btn { grid-column: auto; }.exceptions { grid-template-columns: 1fr; }.exceptions > .btn { width: 100%; }.exception-row { grid-column: auto; grid-template-columns: 1fr auto; }.exception-row .status { display: none; }
+  .toast { left: 14px; right: 14px; bottom: 82px; }
+  .notification-toolbar { align-items: stretch; flex-direction: column; gap: 0; }.notification-toolbar > p { margin: -6px 0 16px; }
+  .notification-item { grid-template-columns: auto 1fr 32px; gap: 10px; padding: 16px 12px; }.notification-type { width: 42px; height: 42px; }.notification-read-button { display: none; }.notification-open-button { grid-column: 3; grid-row: 1; }
+  .profile-identity { grid-template-columns: auto 1fr; padding: 18px; }.profile-identity > .btn { grid-column: 1/-1; width: 100%; }
+  .academic-data, .teaching-grid { grid-template-columns: 1fr; }.academic-data .wide { grid-column: auto; }
+  .teaching-section .profile-section-heading { align-items: flex-start; flex-wrap: wrap; }.teaching-section .profile-section-heading > .btn { width: 100%; margin: 0; }
+  .profile-save { align-items: stretch; flex-direction: column; }.profile-save .btn { width: 100%; }
+}
+
+@media (max-width: 575px) {
+  .login-page { display: block; background: var(--background); }.login-brand { display: none; }.login-panel { min-height: 100vh; padding: 32px 20px; }.login-card { background: white; border-radius: var(--radius-lg); padding: 22px; box-shadow: var(--shadow); }.mobile-logo { display: flex; }.support { margin-top: 24px; }
+  .top-actions { gap: 2px; }.top-actions .icon-button { display: grid; }.professor-card .avatar-large { width: 50px; height: 50px; }.session-callout .date-tile { width: 52px; }.summary-side dl { grid-template-columns: 1fr; }
+  .profile-menu { position: fixed; top: 70px; left: 14px; right: 14px; width: auto; }
+  .profile-section { padding: 18px; }.profile-section-heading { align-items: flex-start; }
+  .modal { padding: 22px; }.modal-actions { flex-direction: column-reverse; }.modal-actions .btn { width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+}

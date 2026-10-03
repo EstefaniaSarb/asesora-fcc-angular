@@ -1,0 +1,41 @@
+// =====================================================================
+// AsesoraFCC | Estilos globales
+// 1. Tema de Angular Material con la paleta institucional BUAP
+// 2. Sistema visual generado en Figma Make, dividido en parciales
+// 3. Ajustes para integrar Material y Bootstrap con ese sistema visual
+//
+// Bootstrap se carga desde angular.json solo como retícula (grid) y
+// utilidades. No se cargan sus componentes (.btn, .card, .modal...) porque
+// el diseño de Figma define los suyos con los mismos nombres de clase.
+// =====================================================================
+@use '@angular/material' as mat;
+@use './theme-colors' as buap;
+@use './styles/base';
+@use './styles/acceso';
+@use './styles/marco';
+@use './styles/inicio';
+@use './styles/estados';
+@use './styles/catalogo';
+@use './styles/profesores';
+@use './styles/solicitud';
+@use './styles/mis-solicitudes';
+@use './styles/profesor';
+@use './styles/disponibilidad';
+@use './styles/notificaciones';
+@use './styles/perfil';
+@use './styles/superposiciones';
+@use './styles/integracion';
+@use './styles/responsivo';
+
+// Tema de Angular Material con la paleta BUAP (variables --mat-sys-*)
+html {
+  @include mat.theme((
+    color: (
+      primary: buap.$primary-palette,
+      tertiary: buap.$tertiary-palette,
+    ),
+    typography: Roboto,
+    density: 0,
+  ));
+  color-scheme: light;
+}
