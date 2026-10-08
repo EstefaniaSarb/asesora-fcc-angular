@@ -1,5 +1,8 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { HORARIO_CONFLICTO_DEMO, SOLICITUDES_INICIALES } from '../data/datos-simulados';
+//import { HORARIO_CONFLICTO_DEMO, SOLICITUDES_INICIALES } from '../data/datos-simulados';
+import { HttpClient } from '@angular/common/http';
+import { API_URL } from '../api.config';
+import { HORARIO_CONFLICTO_DEMO } from '../data/datos-simulados';
 import { ESTADOS_ACTIVOS, EstadoSolicitud, NuevaSolicitud, Solicitud } from '../models';
 import { formatearFecha } from '../utils/fechas';
 import { CatalogoService } from './catalogo.service';
@@ -8,6 +11,7 @@ import { RelojService } from './reloj.service';
 import { SesionService } from './sesion.service';
 
 export type ResultadoCreacion = { ok: true; folio: string } | { ok: false; motivo: 'conflicto' };
+export type EstadoConexion = 'cargando' | 'listo' | 'error';
 
 /**
  * Única fuente de verdad de las solicitudes.
@@ -21,11 +25,36 @@ export class SolicitudService {
   private readonly reloj = inject(RelojService);
   private readonly sesion = inject(SesionService);
 
-  private readonly lista = signal<Solicitud[]>(SOLICITUDES_INICIALES);
+  //private readonly lista = signal<Solicitud[]>(SOLICITUDES_INICIALES);
   /** Se vuelve verdadero cuando ya se mostró el conflicto de horario de demostración. */
+
+private readonly http = inject(HttpClient);
+private readonly url = `${inject(API_URL)}/solicitudes`;
+/** Las solicitudes ahora vienen de la API; al inicio la lista está vacía. */
+private readonly lista = signal<Solicitud[]>([]);
+private readonly estadoConexion = signal<EstadoConexion>('cargando');
+readonly conexion = this.estadoConexion.asReadonly();
+
+
   private readonly conflictoDemo = signal(false);
 
   readonly solicitudes = this.lista.asReadonly();
+
+  constructor() {
+      this.cargar();
+      }
+        /** GET /solicitudes: trae todas las solicitudes desde la API. */
+        cargar(): void {
+          this.estadoConexion.set('cargando');
+          this.http.get<Solicitud[]>(this.url).subscribe({
+            next: (datos) => {
+              this.lista.set(datos);
+              this.estadoConexion.set('listo');
+            },
+            error: () => this.estadoConexion.set('error'),
+          });
+      }
+
 
   /** Solicitudes de la estudiante que usa el prototipo, más recientes primero. */
   readonly delEstudiante = computed(() =>
@@ -81,6 +110,7 @@ export class SolicitudService {
     const profesor = this.catalogo.profesorPorId(datos.profesorId)!;
     const folio = this.siguienteFolio();
     const nueva: Solicitud = {
+      id:folio,
       folio,
       materia: datos.materia,
       tema: datos.tema,

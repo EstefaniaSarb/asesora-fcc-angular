@@ -38,6 +38,31 @@ a.btn, a.text-link, a.nav-item, a.brand-button { text-decoration: none; }
   --mdc-snackbar-supporting-text-color: #fff;
 }
 
+// Aviso de error de conexión con la API
+.api-error { 
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 24px auto 0;
+  width: min(100% - 48px, 1192px);
+  padding: 14px 18px; border-radius: var(--radius); color: var(--danger); background: var(--danger-soft); 
+}
+.api-error div { 
+  flex: 1;
+  display: grid;
+  gap: 3px; 
+}
+.api-error span 
+{ color: #6f2925;
+  font-size: .85rem; 
+}
+.api-error code { 
+  background: white; 
+  border-radius: 4px; 
+  padding: 1px 6px; 
+  color: var(--primary); 
+}
+
 // Panel inferior de filtros en móvil (MatBottomSheet)
 .filtros-sheet .mat-bottom-sheet-container { border-radius: var(--radius-lg) var(--radius-lg) 0 0; padding: 8px 20px 24px; }
 .filtros-sheet .filters { position: static; border: 0; box-shadow: none; padding: 8px 0; }

@@ -1,4 +1,4 @@
-import { Estudiante, Materia, Notificacion, Profesor, Solicitud } from '../models';
+import { Estudiante, Materia, Notificacion, Profesor } from '../models';
 
 /**
  * Datos simulados del prototipo.
@@ -105,7 +105,7 @@ export const ESTUDIANTE_ACTUAL: Estudiante = {
 /** Profesora con la que se recorre el prototipo. */
 export const PROFESOR_ACTUAL_ID = 'ana';
 
-const LUIS: Estudiante = { nombre: 'Luis Mendoza Rivera', programa: 'Lic. en Ciencias de la Computación', semestre: '3er semestre' };
+/*const LUIS: Estudiante = { nombre: 'Luis Mendoza Rivera', programa: 'Lic. en Ciencias de la Computación', semestre: '3er semestre' };
 const MARIANA: Estudiante = { nombre: 'Mariana López Cruz', programa: 'Ing. en Tecnologías de la Información', semestre: '1er semestre' };
 const JORGE: Estudiante = { nombre: 'Jorge Ramírez Soto', programa: 'Ing. en Ciencias de la Computación', semestre: '3er semestre' };
 
@@ -176,7 +176,9 @@ export const SOLICITUDES_INICIALES: Solicitud[] = [
       { estado: 'Completada', fecha: '2026-10-07T11:50', detalle: 'Asesoría registrada como completada' },
     ],
   },
-];
+];*/
+
+// Las solicitudes ahora viven en db.json y se consultan con la API (json-server).
 
 export const NOTIFICACIONES_INICIALES: Notificacion[] = [
   { id: 1, rol: 'estudiante', tipo: 'estado', titulo: 'Tu asesoría fue confirmada',

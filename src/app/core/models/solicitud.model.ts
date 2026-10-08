@@ -19,6 +19,7 @@ export interface Estudiante {
 }
 
 export interface Solicitud {
+  id:string;
   folio: string;
   materia: string;
   tema: string;
