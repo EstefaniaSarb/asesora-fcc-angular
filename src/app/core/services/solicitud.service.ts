@@ -9,6 +9,7 @@ import { CatalogoService } from './catalogo.service';
 import { NotificacionService } from './notificacion.service';
 import { RelojService } from './reloj.service';
 import { SesionService } from './sesion.service';
+import { AvisoService } from './aviso.service';
 
 export type ResultadoCreacion = { ok: true; folio: string } | { ok: false; motivo: 'conflicto' };
 export type EstadoConexion = 'cargando' | 'listo' | 'error';
@@ -39,6 +40,8 @@ readonly conexion = this.estadoConexion.asReadonly();
   private readonly conflictoDemo = signal(false);
 
   readonly solicitudes = this.lista.asReadonly();
+
+  private readonly aviso = inject(AvisoService);
 
   constructor() {
       this.cargar();
@@ -125,6 +128,13 @@ readonly conexion = this.estadoConexion.asReadonly();
       historial: [{ estado: 'Pendiente', fecha: this.reloj.ahora(), detalle: 'Solicitud enviada al docente' }],
     };
     this.lista.update((actual) => [nueva, ...actual]);
+
+// La interfaz se actualiza de inmediato y la API guarda el registro (POST).
+      this.http.post<Solicitud>(this.url, nueva).subscribe({
+        error: () => this.fallo('No se pudo registrar la solicitud en el servidor.'),
+      });
+
+
     this.notificaciones.agregar({
       rol: 'profesor', tipo: 'solicitud', titulo: 'Nueva solicitud de asesoría',
       texto: `${nueva.estudiante.nombre} solicita apoyo con ${nueva.tema}.`, destino: '/profesor/solicitudes',
@@ -192,14 +202,29 @@ readonly conexion = this.estadoConexion.asReadonly();
   // ---------------------------------------------------------------------
 
   private cambiarEstado(folio: string, estado: EstadoSolicitud, detalle: string, cambios: Partial<Solicitud> = {}): void {
-    this.lista.update((actual) =>
+    /*this.lista.update((actual) =>
       actual.map((s) =>
         s.folio === folio
           ? { ...s, ...cambios, estado, historial: [...s.historial, { estado, fecha: this.reloj.ahora(), detalle }] }
           : s,
       ),
-    );
-  }
+    );*/
+    const actual = this.porFolio(folio);
+    if (!actual) return;
+      const historial = [...actual.historial, { estado, fecha: this.reloj.ahora(), detalle }];
+      this.lista.update((lista) => lista.map((s) => (s.folio === folio ? { ...s, ...cambios, estado, historial } : s)));
+    const cuerpo: Record<string, unknown> = { estado, historial };
+      for (const [campo, valor] of Object.entries(cambios)) cuerpo[campo] = valor ?? null;
+      this.http.patch<Solicitud>(`${this.url}/${folio}`, cuerpo).subscribe({
+        error: () => this.fallo('No se pudo guardar el cambio en el servidor.'),
+  });
+}
+/** Si la API falla, se avisa y se vuelve a cargar lo que realmente quedó guardado. */
+    private fallo(mensaje: string): void {
+      this.aviso.error(`${mensaje} Revisa que json-server esté encendido.`);
+      this.cargar();
+    }
+
 
   private avisarEstudiante(folio: string, titulo: string): void {
     const s = this.porFolio(folio)!;
@@ -212,7 +237,8 @@ readonly conexion = this.estadoConexion.asReadonly();
   }
 
   private siguienteFolio(): string {
-    const mayor = Math.max(...this.lista().map((s) => Number(s.folio.split('-')[2])));
+    //const mayor = Math.max(...this.lista().map((s) => Number(s.folio.split('-')[2])));
+    const mayor = Math.max(0, ...this.lista().map((s) => Number(s.folio.split('-')[2])));
     return `ASE-2026-${String(mayor + 1).padStart(4, '0')}`;
   }
 }

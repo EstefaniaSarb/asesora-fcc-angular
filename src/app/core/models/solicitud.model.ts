@@ -32,8 +32,8 @@ export interface Solicitud {
   estado: EstadoSolicitud;
   descripcion: string;
   adjunto?: Adjunto;
-  horarioPropuesto?: string;
-  motivoRechazo?: string;
+  horarioPropuesto?: string | null;
+  motivoRechazo?: string | null;
   historial: EventoHistorial[];
 }
 
